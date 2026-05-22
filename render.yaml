@@ -2,12 +2,11 @@ services:
   # ── FastAPI Backend ──────────────────────────────────────────────────────────
   - type: web
     name: cynex-dental-api
-    runtime: python
+    runtime: docker
     region: frankfurt
     plan: free
     rootDir: backend
-    buildCommand: pip install --upgrade pip && pip install --prefer-binary -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: APP_SECRET_KEY
         generateValue: true
