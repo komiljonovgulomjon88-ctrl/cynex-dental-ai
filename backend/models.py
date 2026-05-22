@@ -1,5 +1,5 @@
-from pydantic import BaseModel, EmailStr
-from typing import List, Optional, Any
+from pydantic import BaseModel
+from typing import List, Optional
 from enum import Enum
 
 # ── Enums ──────────────────────────────────────────────────────────────────────
@@ -22,12 +22,12 @@ class DentistUrgency(str, Enum):
 
 # ── Auth ───────────────────────────────────────────────────────────────────────
 class RegisterRequest(BaseModel):
-    email:     EmailStr
+    email:     str
     password:  str
     full_name: str
 
 class LoginRequest(BaseModel):
-    email:    EmailStr
+    email:    str
     password: str
 
 class TokenResponse(BaseModel):
@@ -52,9 +52,9 @@ class ProfileResponse(ProfileCreate):
 # ── Analysis ──────────────────────────────────────────────────────────────────
 class Condition(BaseModel):
     name:       str
-    risk_score: int          # 0–100
+    risk_score: int
     risk_level: RiskLevel
-    notes:      Optional[str] = None   # Brief clinical note
+    notes:      Optional[str] = None
 
 class Finding(BaseModel):
     title:       str
@@ -63,24 +63,24 @@ class Finding(BaseModel):
     location:    Optional[str] = None
 
 class ActionItem(BaseModel):
-    action:   str
-    reason:   str
-    urgency:  Optional[str] = "this_week"  # immediate | this_week | this_month
+    action:  str
+    reason:  str
+    urgency: Optional[str] = "this_week"
 
 class AnalysisResponse(BaseModel):
-    id:                 str
-    scan_id:            str
-    user_id:            str
-    overall_risk:       RiskLevel
-    conditions:         List[Condition]
-    findings:           List[Finding]
-    ai_recommendation:  str
-    action_items:       List[ActionItem]
-    needs_dentist:      bool
-    dentist_urgency:    Optional[str] = "routine_checkup"
-    image_quality:      Optional[str] = "fair"
-    created_at:         str
-    image_urls:         List[str] = []
+    id:                str
+    scan_id:           str
+    user_id:           str
+    overall_risk:      RiskLevel
+    conditions:        List[Condition]
+    findings:          List[Finding]
+    ai_recommendation: str
+    action_items:      List[ActionItem]
+    needs_dentist:     bool
+    dentist_urgency:   Optional[str] = "routine_checkup"
+    image_quality:     Optional[str] = "fair"
+    created_at:        str
+    image_urls:        List[str] = []
 
 # ── Dashboard ─────────────────────────────────────────────────────────────────
 class ScanSummary(BaseModel):
@@ -101,7 +101,7 @@ class Badge(BaseModel):
 class DashboardResponse(BaseModel):
     total_scans:     int
     streak_days:     int
-    improvement_pct: Optional[float]
+    improvement_pct: Optional[float] = None
     recent_scans:    List[ScanSummary]
     history:         List[HistoryPoint]
     badges:          List[Badge]
@@ -110,12 +110,12 @@ class DashboardResponse(BaseModel):
 class ReminderCreate(BaseModel):
     type:  str
     label: str = ""
-    time:  str           # "HH:MM"
-    days:  List[int]     # 0–6
+    time:  str
+    days:  List[int]
 
 class ReminderUpdate(BaseModel):
-    is_active: Optional[bool]    = None
-    time:      Optional[str]     = None
+    is_active: Optional[bool]      = None
+    time:      Optional[str]       = None
     days:      Optional[List[int]] = None
 
 class ReminderResponse(ReminderCreate):

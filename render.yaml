@@ -1,15 +1,15 @@
 services:
-  # ── FastAPI Backend ──────────────────────────────────────────────────────────
   - type: web
     name: cynex-dental-api
-    runtime: docker
+    runtime: python
     region: frankfurt
     plan: free
     rootDir: backend
-    dockerfilePath: ./Dockerfile
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: APP_SECRET_KEY
-        generateValue: true
+        value: cynex-super-secret-jwt-key-2026-render-prod
       - key: ALGORITHM
         value: HS256
       - key: ACCESS_TOKEN_EXPIRE_MINUTES
@@ -22,3 +22,5 @@ services:
         sync: false
       - key: ALLOWED_ORIGINS
         sync: false
+      - key: PYTHON_VERSION
+        value: "3.11.9"
