@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from enum import Enum
 
 class RiskLevel(str, Enum):
@@ -117,3 +117,80 @@ class ReminderResponse(ReminderCreate):
     user_id:    str
     is_active:  bool
     created_at: str
+
+
+# ── Doctor Models ─────────────────────────────────────────────────────────────
+
+class DoctorRegisterRequest(BaseModel):
+    email:          EmailStr
+    password:       str
+    full_name:      str
+    specialty:      str           # e.g. "Terapevt stomatolog", "Ortodont"
+    license_number: str
+    clinic_name:    Optional[str] = ""
+
+class DoctorLoginRequest(BaseModel):
+    email:    EmailStr
+    password: str
+
+# ── Clinical Analysis Models ──────────────────────────────────────────────────
+
+class ToothColorAnalysis(BaseModel):
+    vita_shade:        str                     # e.g. "A2", "B3"
+    bleaching_scale:   Optional[str]   = None  # e.g. "010" on Chromascop
+    staining_type:     Optional[str]   = None  # extrinsic | intrinsic | none
+    staining_cause:    Optional[str]   = None  # coffee, tobacco, tetracycline, fluorosis...
+    whitening_potential: Optional[str] = None  # low | medium | high
+    notes:             Optional[str]   = None
+
+class ICDASScore(BaseModel):
+    tooth:  str   # FDI notation, e.g. "16", "21"
+    score:  int   # 0–6
+    surface: Optional[str] = None  # occlusal | buccal | mesial | distal | lingual | cervical
+    notes:  Optional[str]  = None
+
+class BPEScore(BaseModel):
+    sextant: str   # I–VI
+    score:   int   # 0–4 (with * for furcation)
+    notes:   Optional[str] = None
+
+class TreatmentItem(BaseModel):
+    priority:    str    # I=Immediate | II=Urgent | III=Routine | IV=Elective
+    procedure:   str
+    tooth:       Optional[str] = None
+    rationale:   str
+    urgency:     Optional[str] = "routine"  # immediate | urgent | routine
+
+class RadiographicFinding(BaseModel):
+    finding:   str
+    location:  Optional[str] = None
+    severity:  Optional[str] = None  # low | medium | high
+    notes:     Optional[str] = None
+
+class PeriodontalData(BaseModel):
+    bpe_scores:           List[BPEScore]     = []
+    bone_loss_visible:    bool               = False
+    bone_loss_pattern:    Optional[str]      = None  # horizontal | vertical | mixed
+    furcation_involvement: bool              = False
+    recession_areas:      List[str]          = []
+    calculus_level:       Optional[str]      = None  # none | mild | moderate | severe
+    overall_severity:     Optional[str]      = None  # healthy | gingivitis | mild_periodontitis | moderate | severe
+
+class ClinicalAnalysisResponse(BaseModel):
+    overall_risk:           RiskLevel
+    dmft_estimate:          Optional[str]              = None   # e.g. "D3 M0 F1"
+    icdas_scores:           List[ICDASScore]            = []
+    color_analysis:         Optional[ToothColorAnalysis] = None
+    periodontal:            Optional[PeriodontalData]   = None
+    radiographic_findings:  List[RadiographicFinding]   = []
+    clinical_findings:      List[Finding]               = []
+    diagnosis:              Optional[str]               = None
+    differential_diagnosis: List[str]                   = []
+    treatment_plan:         List[TreatmentItem]         = []
+    prognosis:              Optional[str]               = None
+    clinical_notes:         Optional[str]               = None
+    ai_recommendation:      str
+    needs_referral:         bool                        = False
+    referral_type:          Optional[str]               = None  # orthodontist | periodontist | endodontist | surgeon | prosthodontist
+    image_types_detected:   List[str]                   = []
+    image_quality:          Optional[str]               = "good"
