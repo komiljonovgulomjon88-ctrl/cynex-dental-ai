@@ -1,0 +1,125 @@
+from pydantic import BaseModel, EmailStr
+from typing import List, Optional, Any
+from enum import Enum
+
+# ── Enums ──────────────────────────────────────────────────────────────────────
+class RiskLevel(str, Enum):
+    low    = "low"
+    medium = "medium"
+    high   = "high"
+
+class Gender(str, Enum):
+    male   = "male"
+    female = "female"
+    other  = "other"
+
+class DentistUrgency(str, Enum):
+    immediate       = "immediate"
+    within_2_weeks  = "within_2_weeks"
+    within_month    = "within_month"
+    routine_checkup = "routine_checkup"
+    not_needed      = "not_needed"
+
+# ── Auth ───────────────────────────────────────────────────────────────────────
+class RegisterRequest(BaseModel):
+    email:     EmailStr
+    password:  str
+    full_name: str
+
+class LoginRequest(BaseModel):
+    email:    EmailStr
+    password: str
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type:   str = "bearer"
+    user:         dict
+
+# ── Profile ────────────────────────────────────────────────────────────────────
+class ProfileCreate(BaseModel):
+    age:             int
+    gender:          Gender
+    has_braces:      bool = False
+    has_sensitivity: bool = False
+    brushing_habit:  str
+    dental_issues:   List[str] = []
+
+class ProfileResponse(ProfileCreate):
+    id:         str
+    user_id:    str
+    created_at: str
+
+# ── Analysis ──────────────────────────────────────────────────────────────────
+class Condition(BaseModel):
+    name:       str
+    risk_score: int          # 0–100
+    risk_level: RiskLevel
+    notes:      Optional[str] = None   # Brief clinical note
+
+class Finding(BaseModel):
+    title:       str
+    description: str
+    severity:    RiskLevel
+    location:    Optional[str] = None
+
+class ActionItem(BaseModel):
+    action:   str
+    reason:   str
+    urgency:  Optional[str] = "this_week"  # immediate | this_week | this_month
+
+class AnalysisResponse(BaseModel):
+    id:                 str
+    scan_id:            str
+    user_id:            str
+    overall_risk:       RiskLevel
+    conditions:         List[Condition]
+    findings:           List[Finding]
+    ai_recommendation:  str
+    action_items:       List[ActionItem]
+    needs_dentist:      bool
+    dentist_urgency:    Optional[str] = "routine_checkup"
+    image_quality:      Optional[str] = "fair"
+    created_at:         str
+    image_urls:         List[str] = []
+
+# ── Dashboard ─────────────────────────────────────────────────────────────────
+class ScanSummary(BaseModel):
+    id:           str
+    overall_risk: RiskLevel
+    created_at:   str
+
+class HistoryPoint(BaseModel):
+    date:         str
+    overall_risk: float
+
+class Badge(BaseModel):
+    id:          str
+    name:        str
+    description: str
+    emoji:       str
+
+class DashboardResponse(BaseModel):
+    total_scans:     int
+    streak_days:     int
+    improvement_pct: Optional[float]
+    recent_scans:    List[ScanSummary]
+    history:         List[HistoryPoint]
+    badges:          List[Badge]
+
+# ── Reminders ─────────────────────────────────────────────────────────────────
+class ReminderCreate(BaseModel):
+    type:  str
+    label: str = ""
+    time:  str           # "HH:MM"
+    days:  List[int]     # 0–6
+
+class ReminderUpdate(BaseModel):
+    is_active: Optional[bool]    = None
+    time:      Optional[str]     = None
+    days:      Optional[List[int]] = None
+
+class ReminderResponse(ReminderCreate):
+    id:         str
+    user_id:    str
+    is_active:  bool
+    created_at: str
