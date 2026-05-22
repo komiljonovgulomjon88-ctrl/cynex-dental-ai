@@ -66,6 +66,9 @@ export default function LandingPage() {
             <span className="font-bold text-xl text-gradient">Dental AI</span>
           </div>
           <div className="flex items-center gap-3">
+            <Link href="/auth?role=doctor&mode=login" className="btn-secondary text-sm px-4 py-2 flex items-center gap-1.5">
+              🩺 Vrach
+            </Link>
             <Link href="/auth?mode=login" className="btn-secondary text-sm px-4 py-2">
               Kirish
             </Link>
