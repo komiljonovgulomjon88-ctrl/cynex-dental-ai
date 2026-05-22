@@ -1,8 +1,7 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from typing import List, Optional
 from enum import Enum
 
-# ── Enums ──────────────────────────────────────────────────────────────────────
 class RiskLevel(str, Enum):
     low    = "low"
     medium = "medium"
@@ -20,14 +19,13 @@ class DentistUrgency(str, Enum):
     routine_checkup = "routine_checkup"
     not_needed      = "not_needed"
 
-# ── Auth ───────────────────────────────────────────────────────────────────────
 class RegisterRequest(BaseModel):
-    email:     str
+    email:     EmailStr
     password:  str
     full_name: str
 
 class LoginRequest(BaseModel):
-    email:    str
+    email:    EmailStr
     password: str
 
 class TokenResponse(BaseModel):
@@ -35,7 +33,6 @@ class TokenResponse(BaseModel):
     token_type:   str = "bearer"
     user:         dict
 
-# ── Profile ────────────────────────────────────────────────────────────────────
 class ProfileCreate(BaseModel):
     age:             int
     gender:          Gender
@@ -49,7 +46,6 @@ class ProfileResponse(ProfileCreate):
     user_id:    str
     created_at: str
 
-# ── Analysis ──────────────────────────────────────────────────────────────────
 class Condition(BaseModel):
     name:       str
     risk_score: int
@@ -82,7 +78,6 @@ class AnalysisResponse(BaseModel):
     created_at:        str
     image_urls:        List[str] = []
 
-# ── Dashboard ─────────────────────────────────────────────────────────────────
 class ScanSummary(BaseModel):
     id:           str
     overall_risk: RiskLevel
@@ -101,12 +96,11 @@ class Badge(BaseModel):
 class DashboardResponse(BaseModel):
     total_scans:     int
     streak_days:     int
-    improvement_pct: Optional[float]
+    improvement_pct: Optional[float] = None
     recent_scans:    List[ScanSummary]
     history:         List[HistoryPoint]
     badges:          List[Badge]
 
-# ── Reminders ─────────────────────────────────────────────────────────────────
 class ReminderCreate(BaseModel):
     type:  str
     label: str = ""
