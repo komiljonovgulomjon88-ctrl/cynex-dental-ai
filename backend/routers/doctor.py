@@ -53,8 +53,8 @@ async def doctor_register(body: DoctorRegisterRequest):
         "email":           body.email,
         "full_name":       body.full_name,
         "password_hash":   hashed,
-        "specialty":       body.specialty,
-        "license_number":  body.license_number,
+        "specialty":       body.specialty or "",
+        "license_number":  body.license_number or "",
         "clinic_name":     body.clinic_name or "",
         "created_at":      now,
     }).execute()

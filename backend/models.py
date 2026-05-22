@@ -125,8 +125,8 @@ class DoctorRegisterRequest(BaseModel):
     email:          EmailStr
     password:       str
     full_name:      str
-    specialty:      str           # e.g. "Terapevt stomatolog", "Ortodont"
-    license_number: str
+    specialty:      Optional[str] = ""
+    license_number: Optional[str] = ""
     clinic_name:    Optional[str] = ""
 
 class DoctorLoginRequest(BaseModel):

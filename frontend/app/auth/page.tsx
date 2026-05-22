@@ -8,7 +8,6 @@ import toast from "react-hot-toast";
 import { useAuthStore } from "@/lib/store";
 import { apiClient } from "@/lib/api";
 import { doctorLogin, doctorRegister, saveDoctorSession } from "@/lib/doctor-api";
-import { SPECIALTIES } from "@/lib/doctor-types";
 import Link from "next/link";
 
 // ─── Patient Form ─────────────────────────────────────────────────────────────
@@ -161,30 +160,11 @@ function DoctorForm({ defaultMode }: { defaultMode: "login" | "register" }) {
       <form onSubmit={handleSubmit} className="space-y-4">
         <AnimatePresence mode="wait">
           {mode === "register" && (
-            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.2 }} className="space-y-4">
-              <div>
-                <label className="label">To&apos;liq ism</label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                  <input className="input pl-10" placeholder="Dr. Ism Familiya" value={form.full_name} onChange={set("full_name")} required={mode === "register"} />
-                </div>
-              </div>
-              <div>
-                <label className="label">Mutaxassislik</label>
-                <select className="input" value={form.specialty} onChange={set("specialty")} required={mode === "register"}>
-                  <option value="">Tanlang...</option>
-                  {SPECIALTIES.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="label">Litsenziya</label>
-                  <input className="input" placeholder="STO-2024-XXXX" value={form.license_number} onChange={set("license_number")} required={mode === "register"} />
-                </div>
-                <div>
-                  <label className="label">Klinika (ixtiyoriy)</label>
-                  <input className="input" placeholder="Klinika nomi" value={form.clinic_name} onChange={set("clinic_name")} />
-                </div>
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.2 }}>
+              <label className="label">To&apos;liq ism</label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                <input className="input pl-10" placeholder="Dr. Ism Familiya" value={form.full_name} onChange={set("full_name")} required={mode === "register"} />
               </div>
             </motion.div>
           )}
