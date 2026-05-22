@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 from typing import List, Optional
 from enum import Enum
 
@@ -22,12 +22,12 @@ class DentistUrgency(str, Enum):
 
 # ── Auth ───────────────────────────────────────────────────────────────────────
 class RegisterRequest(BaseModel):
-    email:     EmailStr
+    email:     str
     password:  str
     full_name: str
 
 class LoginRequest(BaseModel):
-    email:    EmailStr
+    email:    str
     password: str
 
 class TokenResponse(BaseModel):
@@ -101,7 +101,7 @@ class Badge(BaseModel):
 class DashboardResponse(BaseModel):
     total_scans:     int
     streak_days:     int
-    improvement_pct: Optional[float] = None
+    improvement_pct: Optional[float]
     recent_scans:    List[ScanSummary]
     history:         List[HistoryPoint]
     badges:          List[Badge]
